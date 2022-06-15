@@ -26,11 +26,8 @@ class ApiPendapatanController extends Controller
         $seller = array();
 
         for ($i = 0;$i < count($data);$i++){
-            $total = Pemesanan::where('id_pemesanan', $data[$i]->id_pemesanan)->value('total_harga');
 
             $seller = Seller::where('id_Seller', $data[$i]->id_seller)->value('nama_seller');
-
-            $data[$i]->total_harga=$total;
 
             $data[$i]->nama_seller=$seller;
         };
