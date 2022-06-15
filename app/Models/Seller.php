@@ -9,6 +9,7 @@ class Seller extends Model
 {
     use HasFactory;
 
-    protected $table = 'data_seller';
+    public $timestamps = false;
 
+    protected $table = 'data_seller';
 }

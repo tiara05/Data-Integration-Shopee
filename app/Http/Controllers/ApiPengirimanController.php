@@ -87,7 +87,30 @@ class ApiPengirimanController extends Controller
      */
     public function store(Request $request)
     {
+        $data   = Pemesanan::all();
+
+        $produk = Produk::all();
+        $seller = array();
+
+        for ($i = 0;$i < count($produk);$i++){
+            $seller = Produk::where('Id_Seller', $produk[$i]->Id_Seller)->value('Id_Seller');
+
+            $produk[$i]=$seller;
+        };
+
+        for ($i = 0;$i < count($data);$i++){
+            $pengiriman = Pengiriman::create([
+                'id_pemesanan'    => $data[$i]->id_pemesanan,
+                'id_seller'       => $seller,
+                'id_produk'       => $data[$i]->id_produk,
+            ]);
+        };
         
+        if ($pengiriman) {
+            return ApiFormatter::createApi(200, 'Success', $pengiriman);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**

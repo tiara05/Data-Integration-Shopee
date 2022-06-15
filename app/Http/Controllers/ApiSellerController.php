@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Seller;
+use App\Models\Pendapatan;
+use App\Models\Pemesanan;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -18,6 +20,17 @@ class ApiSellerController extends Controller
     public function index()
     {
         $data = Seller::all();
+        $tanggal = array();
+        $total = array();
+
+        for ($i = 0;$i < count($data);$i++){
+            $tanggal = Pendapatan::where('id_seller', $data[$i]->id_Seller)->value('tanggal_keseller');
+            $total = Pendapatan::where('id_seller', $data[$i]->id_Seller)->value('total_pendapatan');
+            
+            $data[$i]->tanggal_release=$tanggal;
+            $data[$i]->total_pendapatan=$total;
+        };
+
 
         if ($data) {
             return ApiFormatter::createApi(200, 'Success', $data);
@@ -76,9 +89,24 @@ class ApiSellerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        
+        $data   = Seller::all();
+        $pemesanan   = Pendapatan::all();
+
+        // $pemesanan = Pemesanan::findOrFail($id);
+
+        for ($i = 0;$i < count($data);$i++){
+            $pengiriman = Pendapatan::where('id_pendapatan', $data[$i]->id_pendapatan)->update([
+                'id_pendapatan'   => $data[$i]->id_pendapatan,
+            ]);
+        };
+
+        if ($data) {
+            return ApiFormatter::createApi(200, 'Success Update', $data);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**

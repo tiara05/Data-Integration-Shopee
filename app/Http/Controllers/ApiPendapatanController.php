@@ -60,7 +60,28 @@ class ApiPendapatanController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $data           = Pendapatan::all();
+        $produk         = Produk::all();
+        $seller         = array();
+
+        for ($i = 0;$i < count($produk);$i++){
+            $seller = Seller::where('Id_Seller', $produk[$i]->Id_Seller)->value('id_Seller');
+            $produk[$i]=$seller;
+        };
+
+        $total = Pemesanan::sum(Pemesanan::raw('data_pemesanan.total_harga'));
+
+        $pendapatan = Pendapatan::create([
+            'id_seller'       => $seller,
+            'tanggal_keseller'=> date('Y/m/d'),
+            'total_pendapatan'=> $total,
+        ]);
+
+        if ($pendapatan) {
+            return ApiFormatter::createApi(200, 'Success Post', $pendapatan);
+        } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
     }
 
     /**

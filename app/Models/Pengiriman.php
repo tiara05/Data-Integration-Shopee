@@ -9,6 +9,8 @@ class Pengiriman extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'data_pengiriman';
     protected $fillable = [
         'id_pengiriman',
