@@ -91,8 +91,8 @@ class ApiSellerController extends Controller
      */
     public function update(Request $request)
     {
-        $data   = Seller::all();
-        $pemesanan   = Pendapatan::all();
+        $data   = Pendapatan::all();
+        $seller   = Seller::all();
 
         // $pemesanan = Pemesanan::findOrFail($id);
 
@@ -102,8 +102,8 @@ class ApiSellerController extends Controller
             ]);
         };
 
-        if ($data) {
-            return ApiFormatter::createApi(200, 'Success Update', $data);
+        if ($seller) {
+            return ApiFormatter::createApi(200, 'Success Update', $seller);
         } else {
             return ApiFormatter::createApi(400, 'Failed');
         }
