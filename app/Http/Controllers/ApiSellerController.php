@@ -97,7 +97,7 @@ class ApiSellerController extends Controller
         // $pemesanan = Pemesanan::findOrFail($id);
 
         for ($i = 0;$i < count($data);$i++){
-            $pengiriman = Pendapatan::where('id_pendapatan', $data[$i]->id_pendapatan)->update([
+            $pengiriman = Seller::where('id_pendapatan', $data[$i]->id_pendapatan)->update([
                 'id_pendapatan'   => $data[$i]->id_pendapatan,
             ]);
         };
