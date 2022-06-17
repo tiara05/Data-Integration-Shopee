@@ -26,6 +26,8 @@ class ApiPemesananController extends Controller
         $produk         = Produk::all();
         $seller         = array();
 
+        $ongkir         = array();
+
         for ($i = 0;$i < count($produk);$i++){
             $seller = Seller::where('Id_Seller', $produk[$i]->Id_Seller)->value('nama_toko');
             $produk[$i]=$seller;
@@ -33,7 +35,11 @@ class ApiPemesananController extends Controller
 
         for ($i = 0;$i < count($data);$i++){
             $toko = Produk::where('Id_Produk', $data[$i]->id_produk)->value('Nama_Produk');
+            $ongkir = Pengiriman::where('id_pengiriman', $data[$i]->id_pengiriman)->value('harga_ongkir');
+            $data[$i]->harga_ongkir=$ongkir;
+
             $data[$i]->nama_barang=$toko;
+            $data[$i]->total_bayar=$ongkir+$data[$i]->total_harga;
             $data[$i]->nama_toko=$seller;
         };
 
@@ -77,11 +83,16 @@ class ApiPemesananController extends Controller
         $data = Pemesanan::all();
         $toko = array();
 
+        $ongkir = array();
+
         for ($i = 0;$i < count($data);$i++){
             $toko = Produk::where('Id_Produk', $data[$i]->id_produk)->value('Harga');
-            $data[$i]->nama_barang=$toko;
-        };
 
+            $ongkir = Pengiriman::where('id_pengiriman', $data[$i]->id_pengiriman)->value('harga_ongkir');
+
+            $data[$i]->nama_barang=$toko;
+            $data[$i]->harga_ongkir=$ongkir;
+        };
 
         $pemesanan = Pemesanan::create([
             'nama_user'         => $request->nama_user,
@@ -93,7 +104,7 @@ class ApiPemesananController extends Controller
             'statusasuransi'    => $request->statusasuransi,
             'tanggal_pemesanan' => date('Y/m/d'),
             'total_harga'       => $toko*$request->qty,
-            'total_bayar'       => $toko*$request->qty,
+            'total_bayar'       => $toko*$request->qty+$ongkir,
         ]);
 
         if ($pemesanan) {
@@ -142,7 +153,8 @@ class ApiPemesananController extends Controller
 
         for ($i = 0;$i < count($data);$i++){
             $pengiriman = Pemesanan::where('id_pemesanan', $data[$i]->id_pemesanan)->update([
-                'id_pengiriman'   => $data[$i]->id_pengiriman,
+                'id_pengiriman'     => $data[$i]->id_pengiriman,
+                'total_bayar'       => $data[$i]->harga_ongkir+$pemesanan[$i]->total_harga,
             ]);
         };
 

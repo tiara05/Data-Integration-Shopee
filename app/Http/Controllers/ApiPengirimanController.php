@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Http;
+
 use App\Helpers\ApiFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Produk;
@@ -10,6 +12,7 @@ use App\Models\Pemesanan;
 use App\Models\Pengiriman;
 use Exception;
 use Illuminate\Http\Request;
+
 
 class ApiPengirimanController extends Controller
 {
@@ -65,6 +68,32 @@ class ApiPengirimanController extends Controller
         if ($data) {
             return ApiFormatter::createApi(200, 'Success', $data);
         } else {
+            return ApiFormatter::createApi(400, 'Failed');
+        }
+    }
+    public function status()
+    {
+        $status = Http::get('https://itsnaufal.my.id/sicepat/api/statuspengiriman');
+
+
+        $data = $status['data'];
+
+        $json = json_decode(json_encode($data),true);
+
+        try{
+            $pengiriman = Pengiriman::all();
+
+            for ($i = 0; $i < count($json); $i++){
+                $upd = Pengiriman::where('id_pemesanan', $json[$i]['ID_Pesanan'])->update([
+                    'status_pengiriman'     => $json[$i]['Status_Paket'],
+                    'harga_ongkir'          => $json[$i]['order']['Harga_Ongkir'],
+                    'tanggal_pengiriman'    => $json[$i]['Tanggal_Status'],
+                ]);
+                
+            }
+            return ApiFormatter::createApi(200, 'Success', $pengiriman);
+        }
+        catch(Exeption $error){
             return ApiFormatter::createApi(400, 'Failed');
         }
     }

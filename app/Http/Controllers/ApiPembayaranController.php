@@ -23,6 +23,7 @@ class ApiPembayaranController extends Controller
     {
         $data = Pembayaran::all();
         $produk = array();
+        $kategori = array();
 
         $user = array();
         $no_hp = array();
@@ -30,9 +31,10 @@ class ApiPembayaranController extends Controller
         $qty = array();
         $total = array();
 
+
         for ($i = 0;$i < count($data);$i++){
             $produk = Produk::where('Id_Produk', $data[$i]->id_produk)->value('Nama_Produk');
-            $produk = Produk::where('Id_Produk', $data[$i]->id_produk)->value('Kategori_Produk');
+            $kategori = Produk::where('Id_Produk', $data[$i]->id_produk)->value('Kategori_Produk');
 
             $user = Pemesanan::where('id_pemesanan', $data[$i]->id_pemesanan)->value('nama_user');
             $no_hp = Pemesanan::where('id_pemesanan', $data[$i]->id_pemesanan)->value('no_hp');
@@ -41,8 +43,9 @@ class ApiPembayaranController extends Controller
             $total = Pemesanan::where('id_pemesanan', $data[$i]->id_pemesanan)->value('total_harga');
 
             $data[$i]->nama_barang=$produk;
+            $data[$i]->kategori_barang=$kategori;
 
-            $data[$i]->nama_penerima=$user;
+            $data[$i]->nama_user=$user;
             $data[$i]->no_hp=$no_hp;
 
             $data[$i]->qty=$qty;

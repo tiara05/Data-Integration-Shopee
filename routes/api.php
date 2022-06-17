@@ -31,6 +31,7 @@ Route::post('pemesananpengiriman/update', [ApiPemesananController::class, 'updat
 Route::post('pemesananpembayaran/update', [ApiPemesananController::class, 'updatepembayaran']);
 
 Route::get('pengiriman', [ApiPengirimanController::class, 'index']);
+Route::post('status', [ApiPengirimanController::class, 'status']);
 Route::post('pengiriman/store', [ApiPengirimanController::class, 'store']);
 
 Route::get('pembayaran', [ApiPembayaranController::class, 'index']);
